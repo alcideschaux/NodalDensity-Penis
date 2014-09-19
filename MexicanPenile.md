@@ -10,7 +10,7 @@ __List of Authors:__ Isabel Alvarado,<sup>1</sup>  César Aponte,<sup>2</sup>, D
 
 ***
 
-Last update: ``Fri Sep 19 08:18:52 2014``
+Last update: ``Fri Sep 19 10:03:56 2014``
 
 
 ```r
@@ -157,8 +157,8 @@ __Conclusions:__ High nodal density is associated with aggressive pathologic fea
 
 ```
 ##         Count Percentages
-## Grade 1    20        13.0
-## Grade 2    52        33.8
+## Grade 1    19        12.3
+## Grade 2    53        34.4
 ## Grade 3    82        53.2
 ```
 
@@ -213,9 +213,10 @@ __Conclusions:__ High nodal density is associated with aggressive pathologic fea
 ```
 ##         Count Percentages
 ## Score 2     9         5.8
-## Score 3    19        12.3
-## Score 4    35        22.7
-## Score 5    44        28.6
+## Score 3    18        11.7
+## Score 4    36        23.4
+## Score 5    25        16.2
+## Score 6    19        12.3
 ## Score 7    47        30.5
 ```
 
@@ -406,11 +407,11 @@ __Conclusions:__ High nodal density is associated with aggressive pathologic fea
 
 ```
 ##         Median IQR Mean   SD Min Max
-## Grade 1      0   0  0.5  2.5   0  11
-## Grade 2      0   0  1.8  5.1   0  25
+## Grade 1      0   0  0.0  0.0   0   0
+## Grade 2      0   0  2.0  5.2   0  25
 ## Grade 3     12  25 16.7 17.2   0  91
 ## 
-## Kruskal-Wallis's P value = 8.358e-13
+## Kruskal-Wallis's P value = 5.967e-13
 ```
 
 ![plot of chunk NodalGrade](figure/NodalGrade.png) 
@@ -484,13 +485,14 @@ __Conclusions:__ High nodal density is associated with aggressive pathologic fea
 
 ```
 ##         Median  IQR Mean   SD Min Max
-## Score 2      0  0.0  0.0  0.0   0   0
-## Score 3      0  0.0  0.6  2.5   0  11
-## Score 4      0  0.0  0.3  1.1   0   5
-## Score 5      7 14.5 11.7 17.1   0  91
-## Score 7     18 21.0 19.9 15.0   0  50
+## Score 2    0.0  0.0  0.0  0.0   0   0
+## Score 3    0.0  0.0  0.0  0.0   0   0
+## Score 4    0.0  0.0  0.6  2.1   0  11
+## Score 5    3.0 10.0  6.7  9.0   0  29
+## Score 6   13.5 18.2 24.2 25.5   3  91
+## Score 7   18.0 21.0 19.9 15.0   0  50
 ## 
-## Kruskal-Wallis's P value = 2.549e-14
+## Kruskal-Wallis's P value = 2.117e-15
 ```
 
 ![plot of chunk NodalPI](figure/NodalPI.png) 
