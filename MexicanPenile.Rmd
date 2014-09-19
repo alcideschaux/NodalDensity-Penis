@@ -1,0 +1,529 @@
+# Nodal Density in Penile Cancer
+
+__Title:__ High Nodal Density Is Associated with Aggressive Pathologic Features and Predicts Outcome in Patients with Penile Squamous Cell Carcinoma Treated by Penectomy and Inguinal Lymphadenectomy
+
+__List of Authors:__ Isabel Alvarado,<sup>1</sup>  César Aponte,<sup>2</sup>, Diana Piedras,<sup>1</sup> Adriana Rodriguez-Gómez,<sup>1</sup> Diego F Sanchez,<sup>3</sup> Narciso Hernández-Toriz,<sup>1</sup> Antonio L. Cubilla,<sup>3</sup> and  Alcides Chaux<sup>2</sup>
+
+<sup>1</sup> Servicio de Anatomía Patológica, Hospital de Oncología, Centro Médico Nacional Siglo XXI, Instituto Mexicano del Seguro Social, México D.F.  
+<sup>2</sup> Office of Scientific Research, Norte University, Asunción, Paraguay  
+<sup>3</sup> Instituto de Patología e Investigación, Facultad de Ciencias Medicas,  Asunción, Paraguay
+
+***
+
+Last update: ```r {date()}```
+
+```{r GlobalOptions}
+# Setting the global options for the analysis
+library(knitr)
+opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+```{r DataSet}
+source("StandardAnalysis3.R")
+library(foreign)
+library(car) # For scatterplot
+library(effsize) # For cohen.d
+# Reading the full dataset
+DataFull <- read.dta("mx_penile_dataset_february_2014.dta")
+# Creating a list of selected variables
+SelectedVariables <- c("age", "penectomy", "site", "size", "subtype", "grade", "thick", "lvi", "pni", "level", "ln_dx", "ln_r", "r_met", "ln_l", "l_met", "ln_t", "met_dens", "ln_met", "met_bi", "rt_pos", "outcome", "cancer_dis", "cancer_death", "hpvrelated", "pi", "pt_stage", "pn_stage", "m_stage", "tnm_stage", "urethra", "fu_month")
+# Creating the working dataset
+Data <- DataFull[, SelectedVariables]
+Data <- droplevels(Data)
+# Renaming levels of factors
+library(plyr)
+Data$site <- revalue(Data$site, c(
+        "C" = "Coronal Sulcus",
+        "F+C" = "Foreskin + Coronal Sulcus",
+        "G" = "Glans",
+        "G+C" = "Glans + Coronal Sulcus",
+        "G+F" = "Glans + Foreskin",
+        "G+S" = "Glans + Shaft"
+        ))
+Data$level <- revalue(Data$level, c(
+        "LP" = "Lamina Propria",
+        "CS" = "Corpus Spongiosum",
+        "CC" = "Corpus Cavernosum"
+        ))
+Data$grade <- revalue(as.factor(Data$grade), c(
+        "1" = "Grade 1",
+        "2" = "Grade 2",
+        "3" = "Grade 3"
+        ))
+Data$subtype2 <- revalue(Data$subtype, c(
+        "Verrucous-Papillary-Warty" = "Mixed W/B",
+        "Verrucous-Papillary" = "Mixed non-W/B",
+        "Usual-Warty-Basaloid" = "Mixed W/B",
+        "Usual-Warty" = "Mixed W/B",
+        "Usual-Verrucous-Warty" = "Mixed W/B",
+        "Usual-Verrucous-Papillary" = "Mixed non-W/B",
+        "Usual-Verrucous-Cuniculatum" = "Mixed non-W/B",
+        "Usual-Verrucous" = "Mixed non-W/B",
+        "Usual-Papillary-Warty" = "Mixed W/B",
+        "Usual-Papillary" = "Mixed non-W/B",
+        "Usual-Basaloid" = "Mixed W/B"
+        ))
+Data$site2 <- revalue(Data$site, c(
+        "Coronal Sulcus" = "Foreskin/Coronal Sulcus",
+        "Foreskin + Coronal Sulcus" = "Foreskin/Coronal Sulcus",
+        "Glans" = "Glans alone",
+        "Glans + Coronal Sulcus" = "Glans + Adjacent",
+        "Glans + Foreskin" = "Glans + Adjacent",
+        "Glans + Shaft" = "Glans + Adjacent"
+        ))
+Data$pi <- revalue(as.factor(Data$pi), c(
+        "2" = "Score 2",
+        "3" = "Score 3",
+        "4" = "Score 4",
+        "5" = "Score 5",
+        "6" = "Score 5",
+        "7" = "Score 7"
+        ))
+# Defining colors for plots
+nice.colors <- c("turquoise", "coral", "cornflowerblue")
+# Defining "density" as 100*met_dens
+Data$density <- 100*Data$met_dens
+```
+
+***
+
+### Abstract
+
+__Background:__ Proper clinical management of patients with penile squamous cell carcinomas (SCC) is hampered by its rarity in developed nations and by the lack of sufficiently large series with adequate follow-up. Aimed to solve this issue several pathologic features have been proposed as prognostic factors. Recently, nodal density (defined as the ratio of positive inguinal lymph nodes over the total number of inguinal lymph nodes) has been identified as a promising tool to define the outcome of patients with penile SCC. In this study, we evaluate the usefulness of nodal density as a predictor of aggressive pathologic features and outcome in a large series of patients with penile SCC.
+
+__Design:__ This study includes 154 patients with invasive penile SCC treated by penectomy, of whom 133 received a bilateral inguinal lymphadenectomy. The number of lymph nodes per patient that were pathologically evaluated ranged from 1 to 27 for each side, with a median of 8 lymph nodes per side per patient. Clinical endpoints included cancer-free survival and cancer-specific death. Patients were followed  from 11 to 82 months (mean of 54.2 ± 16.5 months). Associations were evaluated using the Mann-Whitney U/Kruskal-Wallis test. A 2-sided P < 0.05 was required for statistical signficance.
+
+__Results:__ High nodal density was significantly associated with the following aggressive pathologic features: invasion of multiple anatomical sites (P=1.36e-4), tumor size > 4 cm (P=1.02e-11), high histologic grade (P=8.36e-13), tumor thickness > 13 mm (P=2.75e-20), presence of lymphovascular invasion (P=1.68e17),  perineural invasion (P=2.48e-9), invasion of deep erectile tissues (P=2.29e-15), prognostic index > 4 (P=2.55e-14), > pT1b (P=2.43e-6), > pN1 (P=1.07e-27), pM (P=4.14e-19), > stage II (P=2.14e-20), and invasion of distal urethra (P=2.35e-6). Regarding outcome, high nodal density was associated with cancer-free survival (P=1.38e-18) and cancer-specific death (P=2.32e-12).
+
+__Conclusions:__ High nodal density is associated with aggressive pathologic features in the primary tumor of patients with penile SCC treated by penectomy and bilateral inguinal lymphadenectomy. High nodal density is significantly associated with a lower proportion of cancer-free survival and a higher proportion of cancer-specific death.
+
+### Results
+
+#### Clinicopathologic Features
+* __Patients' age__
+```{r DescriptiveAge, fig.width = 9}
+descriptive(Data$age)
+par(mfrow = c(1,2), cex.lab = 1.25)
+# Histogram
+hist(Data$age, freq = FALSE, col = "coral", main = "",
+     xlab = "Patients' Age (years)", ylab = "Probability Density")
+lines(density(Data$age), lwd = 1.5)
+# Boxplot
+boxplot(Data$age, col = "turquoise", ylab = "Patients' Age (years)")
+```
+
+* __Surgical procedure__
+```{r DescriptiveSurg}
+table.prop(Data$penectomy)
+# Barplot
+DescriptiveSurg.plot <- barplot(table(Data$penectomy), col = nice.colors,
+                                main = "Penectomy", cex.main = 1.5,
+                                ylim = c(0, 110), ylab = "No. Patients", cex.lab = 1.25)
+text(DescriptiveSurg.plot, paste("N =", table(Data$penectomy)), y = table(Data$penectomy) + 4)
+```
+
+* __Anatomical site__
+```{r DescriptiveSite}
+table.prop(Data$site)
+table.prop(Data$site2)
+# Barplot
+DescriptiveSite.plot <- barplot(table(Data$site2), col = nice.colors,
+                                main = "Anatomical Site", cex.main = 1.5,
+                                ylim = c(0, 110), ylab = "No. Patients", cex.lab = 1.25)
+text(DescriptiveSite.plot, paste("N =", table(Data$site2)), y = table(Data$site2) + 4)
+```
+
+* __Tumor size (cm)__
+```{r DescriptiveSize, fig.width = 9}
+descriptive(Data$size)
+par(mfrow = c(1, 2), cex.lab = 1.25)
+# Histogram
+hist(Data$size, main = "", col = "coral", freq = FALSE,
+     xlab = "Tumor size (cm)", ylab = "Probability Density")
+lines(density(Data$size), lwd = 1.5)
+# Boxplot
+boxplot(Data$size, col = "turquoise", ylab = "Tumor size (cm)")
+```
+
+* __Tumor subtype__
+```{r DescriptiveSubtype, fig.width = 7, fig.height = 7}
+table.prop(Data$subtype)
+table.prop(Data$subtype2)
+SubtypeOrdered <- sort(table(Data$subtype2), decreasing = FALSE)
+# Barplot
+par(mar = c(5, 9, 0, 2) + 0.1, las = 2, cex.lab = 1.25)
+DescriptiveSubtype.plot <- barplot(SubtypeOrdered, horiz = TRUE,
+        xlab = "No. Patients",
+        col = rainbow(13), xlim = c(0, 80))
+text(DescriptiveSubtype.plot, paste("N =", SubtypeOrdered), x = SubtypeOrdered + 5)
+```
+
+* __Anatomical level__
+```{r DescriptiveLevel, fig.width = 7}
+table.prop(Data$level)
+# Barplot
+DescriptiveLevel.plot <- barplot(table(Data$level), col = nice.colors,
+                                 main = "Anatomical Level", cex.main = 1.5,
+                                 ylab = "No. Patients", ylim = c(0, 80), cex.lab = 1.25)
+text(DescriptiveLevel.plot, paste("N =", table(Data$level)), y = table(Data$level) + 4)
+```
+
+* __Histologic grade__
+```{r DescriptiveGrade}
+table.prop(Data$grade)
+# Barplot
+DescriptiveGrade.plot <- barplot(table(Data$grade), col = nice.colors,
+                                 main = "Histologic Grade", cex.main = 1.5,
+                                 ylab = "No. Patients", ylim = c(0, 95), cex.lab = 1.25)
+text(DescriptiveGrade.plot, paste("N =", table(Data$grade)), y = table(Data$grade) + 4)
+```
+
+* __Tumor thickness__
+```{r DescriptiveThickness, fig.width = 9}
+descriptive(Data$thick)
+par(mfrow = c(1, 2), cex.lab = 1.25)
+hist(Data$thick, , freq = FALSE, col = "coral", main = "",
+     xlab = "Tumor Thickness (mm)", ylab = "Probability Density", ylim = c(0, 0.06))
+lines(density(Data$thick), lwd = 1.5)
+boxplot(Data$thick, col = "turquoise", ylab = "Tumor Thickness (mm)")
+```
+
+* __Lymphpvascular invasion__
+```{r DescriptiveLVI}
+table.prop(Data$lvi)
+# Barplot
+DescriptiveLVI.plot <- barplot(table(Data$lvi), col = nice.colors,
+                               main = "Lymphovascular Invasion", cex.main = 1.5,
+                               ylab = "No. Patients", ylim = c(0, 100), cex.lab = 1.25)
+text(DescriptiveLVI.plot, paste("N =", table(Data$lvi)), y = table(Data$lvi) + 4)
+```
+
+* __Perineural invasion__
+```{r DescriptivePNI}
+table.prop(Data$pni)
+# Barplot
+DescriptivePNI.plot <- barplot(table(Data$pni), col = nice.colors,
+                               main = "Perineural Invasion", cex.main = 1.5, 
+                               ylab = "No. Patients", ylim = c(0, 110), cex.lab = 1.25)
+text(DescriptivePNI.plot, paste("N =", table(Data$pni)), y = table(Data$pni) + 4)
+```
+
+* __HPV infection__
+```{r DescriptiveHPV}
+table.prop(Data$hpvrelated)
+# Barplot
+DescriptiveHPV.plot <- barplot(table(Data$hpvrelated), col = nice.colors,
+                               main = "HPV Infection", cex.main = 1.5, 
+                               ylab = "No. Patients", ylim = c(0, 110), cex.lab = 1.25)
+text(DescriptiveHPV.plot, paste("N =", table(Data$hpvrelated)), y = table(Data$hpvrelated) + 4)
+```
+
+* __Prognostic index__
+```{r DescriptivePI}
+table.prop(Data$pi)
+# Barplot
+DescriptivePI.plot <- barplot(table(Data$pi), col = rainbow(6),
+                               main = "Prognostic Index", cex.main = 1.5, 
+                               ylab = "No. Patients", ylim = c(0, 55), cex.lab = 1.25)
+text(DescriptivePI.plot, paste("N =", table(Data$pi)), y = table(Data$pi) + 4)
+```
+
+* __pT stage__
+```{r DescriptiveT}
+table.prop(Data$pt_stage)
+# Barplot
+DescriptiveT.plot <- barplot(table(Data$pt_stage), col = rainbow(5),
+                               main = "pT Stage", cex.main = 1.5, 
+                               ylab = "No. Patients", ylim = c(0, 100), cex.lab = 1.25)
+text(DescriptiveT.plot, paste("N =", table(Data$pt_stage)), y = table(Data$pt_stage) + 4)
+```
+
+* __pN stage__
+```{r DescriptiveN}
+table.prop(Data$pn_stage)
+# Barplot
+DescriptiveN.plot <- barplot(table(Data$pn_stage), col = nice.colors,
+                               main = "pN Stage", cex.main = 1.5, 
+                               ylab = "No. Patients", ylim = c(0, 100), cex.lab = 1.25)
+text(DescriptiveN.plot, paste("N =", table(Data$pn_stage)), y = table(Data$pn_stage) + 4)
+```
+
+* __pM stage__
+```{r DescriptiveM}
+table.prop(Data$m_stage)
+# Barplot
+DescriptiveM.plot <- barplot(table(Data$m_stage), col = nice.colors,
+                               main = "M Stage", cex.main = 1.5, 
+                               ylab = "No. Patients", ylim = c(0, 100), cex.lab = 1.25)
+text(DescriptiveM.plot, paste("N =", table(Data$m_stage)), y = table(Data$m_stage) + 4)
+```
+
+* __TNM stage__
+```{r DescriptiveTNM}
+table.prop(Data$tnm_stage)
+# Barplot
+DescriptiveTNM.plot <- barplot(table(Data$tnm_stage), col = rainbow(5),
+                               main = "TNM Stage", cex.main = 1.5, 
+                               ylab = "No. Patients", ylim = c(0, 100), cex.lab = 1.25)
+text(DescriptiveTNM.plot, paste("N =", table(Data$tnm_stage)), y = table(Data$tnm_stage) + 4)
+```
+
+* __Urethral invasion__
+```{r DescriptiveU}
+table.prop(Data$urethra)
+# Barplot
+DescriptiveU.plot <- barplot(table(Data$urethra), col = nice.colors,
+                               main = "Urethral Invasion", cex.main = 1.5, 
+                               ylab = "No. Patients", ylim = c(0, 120), cex.lab = 1.25)
+text(DescriptiveU.plot, paste("N =", table(Data$urethra)), y = table(Data$urethra) + 4)
+```
+
+#### Nodal Density
+* Diagnosis of lymphadenopathy
+```{r NodesDx}
+table.prop(Data$ln_dx)
+DataNodes <- subset(Data, ln_dx == "Lymphadenectomy")
+```
+
+* Lymph nodes metastasis
+```{r NodesMetastasis}
+table.prop(DataNodes$ln_met)
+table.prop(DataNodes$met_bi)
+```
+
+* Right lymph nodes
+```{r NodesRight}
+descriptive(DataNodes$ln_r)
+descriptive(DataNodes$r_met)
+```
+
+* Left lymph nodes
+```{r NodesLeft}
+descriptive(DataNodes$ln_l)
+descriptive(DataNodes$l_met)
+```
+
+#### Association of Nodal Density with Clinicopathologic Features
+* __Nodal Density and Anatomical Site of Primary Tumor__
+```{r NodalSite, fig.width = 9}
+compare.kw(DataNodes$density, DataNodes$site2)
+# Significance test
+NodalSite.P <- kruskal.test(density ~ site2, data = DataNodes)
+# Boxplot
+boxplot(density ~ site2, data = DataNodes, cex.lab = 1.25,
+        main = "Nodal Density and Anatomical Site of Primary Tumor", cex.main = 1.5,
+        names = c("Foreskin + Coronal Sulcus", "Glans Alone", "Glans + Adjacent"),
+        col = nice.colors,
+        ylab = "Nodal Density")
+text(paste("P value =", format(NodalSite.P$p.value, digits = 3, width = 7, scientific = TRUE)), x = 0.85, y = 85)
+```
+
+* __Nodal density and tumor size__
+```{r NodalSize, fig.width = 9, fig.height = 7}
+NodalSize.Cor <- cor.test(DataNodes$density, DataNodes$size, method = c("spearman"))
+NodalSize.Cor
+# Scatterplot
+scatterplot(density ~ size, data = DataNodes, boxplots = FALSE, grid = FALSE,
+            main = "Nodal Density and Tumor Size", cex.main = 1.5,
+            ylab = "Nodal Density", xlab = "Tumor Size (cm)", cex.lab = 1.25)
+text(paste("P value =", format(NodalSize.Cor$p.value, digits = 3, width = 7)), x = 2, y = 85)
+text(paste("Spearman's rho =", format(NodalSize.Cor$estimate, digits = 3, width = 7)), x = 2.3, y = 77.5)
+```
+
+* __Nodal density and histologic subtype__
+```{r NodalSubtype, fig.width = 9, fig.height = 7}
+compare.kw(DataNodes$density, DataNodes$subtype2)
+# Significance test
+NodalSubtype.P <- kruskal.test(density ~ subtype2, data = DataNodes)
+# Boxplot
+par(mar = c(5, 9, 4, 2) + 0.1, las = 2, cex.lab = 1.25)
+boxplot(density ~ subtype2, data = DataNodes, horizontal = TRUE,
+        main = "Nodal Density and Histologic Subtype", cex.main = 1.5,
+        col = rainbow(13), xlab = "Nodal Density")
+text(paste("P value =", format(NodalSubtype.P$p.value, digits = 3, width = 7, scientific = TRUE)), x = 80, y = 13)
+```
+
+* __Nodal density and histologic grade__
+```{r NodalGrade, fig.width = 9}
+compare.kw(DataNodes$density, DataNodes$grade)
+# Significance test
+NodalGrade.P <- kruskal.test(density ~ grade, data = DataNodes)
+# Boxplot
+boxplot(density ~ grade, data = DataNodes, cex.lab = 1.25,
+        main = "Nodal Density and Histologic Grade", cex.main = 1.5,
+        col = nice.colors, ylab = "Nodal Density")
+text(paste("P value =", format(NodalGrade.P$p.value, digits = 3, width = 7)), x = 0.75, y = 85)
+```
+
+* __Nodal density and tumor thickness__
+```{r NodalThickness, fig.width = 9, fig.height = 7}
+# Significance test
+NodalThickness.Cor <- cor.test(DataNodes$density, DataNodes$thick, method = c("spearman"))
+NodalThickness.Cor
+# Scatterplot
+scatterplot(density ~ thick, data = DataNodes, boxplots = FALSE, grid = FALSE,
+            main = "Nodal Density and Tumor Thickness", cex.main = 1.5,
+            xlab = "Tumor Thickness (mm)", ylab = "Nodal Density", cex.lab = 1.25)
+text(paste("P value =", format(NodalThickness.Cor$p.value, digits = 3, width = 7)), x = 4.5, y = 85)
+text(paste("Spearman's rho =", format(NodalThickness.Cor$estimate, digits = 3, width = 7)), x =5.25, y = 77.5)
+
+```
+
+* __Nodal density and lymphovascular invasion__
+```{r NodalLVI, fig.width = 7}
+compare.mw(DataNodes$density, DataNodes$lvi)
+# Significance test
+NodalLVI.P <- wilcox.test(density ~ lvi, data = DataNodes)
+# Boxplot
+boxplot(density ~ lvi, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and Lymphovascular Invasion", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "Lymphovascular Invasion")
+text(paste("P value =", format(NodalLVI.P$p.value, digits = 3, width = 7)), x = 0.75, y = 85)
+```
+
+* __Nodal density and perineural invasion__
+```{r NodalPNI, fig.width = 7}
+compare.mw(DataNodes$density, DataNodes$pni)
+# Significance test
+NodalPNI.P <- wilcox.test(density ~ pni, data = DataNodes)
+boxplot(density ~ pni, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and Perineural Invasion", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "Perineural Invasion")
+text(paste("P value =", format(NodalPNI.P$p.value, digits = 3, width = 7)), x = 0.75, y = 85)
+```
+
+* __Nodal density and anatomical level__
+```{r NodalLevel, fig.width = 7}
+compare.kw(DataNodes$density, DataNodes$level)
+# Significance test
+NodalLevel.P <- kruskal.test(density ~ level, data = DataNodes)
+# Boxplot
+boxplot(density ~ level, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and Anatomical Level", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "Anatomical Level")
+text(paste("P value =", format(NodalLevel.P$p.value, digits = 3, width = 7)), x = 1, y = 85)
+```
+
+* __Nodal density and HPV infection__
+```{r NodalHPV, fig.width = 7}
+compare.mw(DataNodes$density, DataNodes$hpvrelated)
+# Significance test
+NodalHPV.P <- kruskal.test(density ~ hpvrelated, data = DataNodes)
+# Boxplot
+boxplot(density ~ hpvrelated, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and HPV Infection", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "HPV Infection")
+text(paste("P value =", format(NodalHPV.P$p.value, digits = 3, width = 7)), x = 0.75, y = 85)
+```
+
+* __Nodal density and prognostic index__
+```{r NodalPI, fig.width = 7}
+compare.kw(DataNodes$density, DataNodes$pi)
+# Significance test
+NodalPI.P <- kruskal.test(density ~ pi, data = DataNodes)
+# Boxplot
+boxplot(density ~ pi, data = DataNodes, cex.lab = 1.25, col = rainbow(6),
+        main = "Nodal Density and Prognostic Index", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "Prognostic Index")
+text(paste("P value =", format(NodalPI.P$p.value, digits = 3, width = 7)), x = 1.25, y = 85)
+```
+
+* __Nodal density and pT stage__
+```{r NodalT, fig.width = 7}
+compare.kw(DataNodes$density, DataNodes$pt_stage)
+# Significance test
+NodalT.P <- kruskal.test(density ~ pt_stage, data = DataNodes)
+# Boxplot
+boxplot(density ~ pt_stage, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and pT Stage", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "pT Stage")
+text(paste("P value =", format(NodalT.P$p.value, digits = 3, width = 7)), x = 1.25, y = 85)
+```
+
+* __Nodal density and pN stage__
+```{r NodalN, fig.width = 7}
+compare.kw(DataNodes$density, DataNodes$pn_stage)
+# Significance test
+NodalN.P <- kruskal.test(density ~ pn_stage, data = DataNodes)
+# Boxplot
+boxplot(density ~ pn_stage, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and pN Stage", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "pN Stage")
+text(paste("P value =", format(NodalN.P$p.value, digits = 3, width = 7)), x = 1, y = 85)
+```
+
+* __Nodal density and pM stage__
+```{r NodalM, fig.width = 7}
+compare.mw(DataNodes$density, DataNodes$m_stage)
+# Significance test
+NodalM.P <- wilcox.test(density ~ m_stage, data = DataNodes)
+# Boxplot
+boxplot(density ~ m_stage, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and pM Stage", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "pM Stage")
+text(paste("P value =", format(NodalM.P$p.value, digits = 3, width = 7)), x = 0.75, y = 85)
+```
+
+* __Nodal density and TNM stage__
+```{r NodalTNM, fig.width = 7}
+compare.kw(DataNodes$density, DataNodes$tnm_stage)
+# Significance test
+NodalTNM.P <- kruskal.test(density ~ tnm_stage, data = DataNodes)
+# Boxplot
+boxplot(density ~ tnm_stage, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and TNM Stage", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "TNM Stage")
+text(paste("P value =", format(NodalTNM.P$p.value, digits = 3, width = 7)), x = 1.5, y = 85)
+```
+
+* __Nodal density and urethral invasion__
+```{r NodalUrethra, fig.width = 7}
+compare.mw(DataNodes$density, DataNodes$urethra)
+# Significance test
+NodalUrethra.P <- wilcox.test(density ~ urethra, data = DataNodes)
+# Boxplot
+boxplot(density ~ urethra, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and Urethral Invasion", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "Urethral Invasion")
+text(paste("P value =", format(NodalUrethra.P$p.value, digits = 3, width = 7)), x = 0.75, y = 85)
+```
+
+#### Association of Nodal Density with Outcome
+* __Distribution of outcomes__
+```{r NodalOutcome}
+table.prop(DataNodes$outcome)
+```
+* __Follow-up lenght__
+```{r NodalFU}
+descriptive(DataNodes$fu_month)
+```
+
+* __Nodal density and cancer-disease (AWD & DOD)__
+```{r NodalDisease, fig.width = 7}
+compare.kw(DataNodes$density, DataNodes$cancer_dis)
+# Kruskal-Wallis test
+NodalDiseaseKW <- kruskal.test(density ~ cancer_dis, data = DataNodes)
+# Cohen's d test
+NodalDiseaseCohen <- cohen.d(density ~ cancer_dis, data = DataNodes)
+# Boxplot
+boxplot(density ~ cancer_dis, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and Cancer-Disease", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "Cancer-Disease")
+text(paste("P value =", format(NodalDiseaseKW$p.value, digits = 3, width = 7)), x = 0.75, y = 85)
+text(paste("Cohen's d =", format(NodalDiseaseCohen$estimate, digits = 3, width = 7)), x = 0.75, y = 77.5)
+```
+
+* __Nodal density and cancer-death__
+```{r NodalDOD, fig.width = 7}
+compare.kw(DataNodes$density, DataNodes$cancer_death)
+# Kruskal-Wallis test
+NodalDODKW <- kruskal.test(density ~ cancer_death, data = DataNodes)
+# Cohen's d test
+NodalDODCohen <- cohen.d(density ~ cancer_death, data = DataNodes)
+# Boxplot
+boxplot(density ~ cancer_death, data = DataNodes, cex.lab = 1.25, col = nice.colors,
+        main = "Nodal Density and Cancer-Death", cex.main = 1.5,
+        ylab = "Nodal Density", xlab = "Cancer-Death")
+text(paste("P value =", format(NodalDODKW$p.value, digits = 3, width = 7)), x = 0.75, y = 85)
+text(paste("Cohen's d =", format(NodalDODCohen$estimate, digits = 3, width = 7)), x = 0.75, y = 77.5)
+```
